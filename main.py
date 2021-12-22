@@ -1,4 +1,5 @@
 
+
 import pygame
 import geometry_object
 import random
@@ -74,11 +75,16 @@ class Point(geometry_object.Point):
     def __init__(self, x, y):
         # self.color = random.choice([BLUE, RED, GREEN])
         self.color = BLUE
+        self.move = True
         super().__init__(x, y)
         # self.r = random.choice([5,10, 15, 20])
         self.r = 5
 
     def draw(self, screen):
+        if self.move:
+            self.color = BLUE
+        else:
+            self.color = GREEN
         pygame.draw.circle(screen, self.color, (self.x, self.y), self.r)
 
 
@@ -102,6 +108,7 @@ class All:
     def add_point(self, x, y):
         a = geometry_object.Point(x, y)
         self.point.append(Point(x, y))
+        return self.__len__() - 1
 
     def add_object(self, ob):
         # добавление обьекта построенного по двумточками
@@ -145,6 +152,14 @@ class All:
                             b = geometry_object.Point(b.x, b.y)
                             all.all_sprites[i].__init__(a, b)
 
+    def upted(self):
+
+        for i in range(self.__len__()):
+            for j in range(i + 2, self.__len__()):
+                a = self.point[i]
+                b = self.point[j]
+                if (a.x - b.x) ** 2 + (a.y - b.y) ** 2 <= 25:
+                    self.point[j] = self.point[i]
 
 # Создаем игру и окно
 pygame.init()
@@ -197,9 +212,9 @@ while running:
                     mouse_cors.append(pos)
                     a = mouse_cors[0]
                     a = geometry_object.Point(a[0], a[1])
-                    all.add_point(pos[0], pos[1])
-                    all.add_point(pos[0], pos[1])
-                    all.add_object(Line(len(all) - 2, len(all) - 1))
+                    ind1 = all.add_point(pos[0], pos[1])
+                    ind2 = all.add_point(pos[0] + 10, pos[1])
+                    all.add_object(Line(ind1, ind2))
                 elif len(mouse_cors) == 1:
                     a = mouse_cors[0]
                     pos = event.pos
@@ -213,9 +228,9 @@ while running:
                     mouse_cors.append(pos)
                     a = mouse_cors[0]
                     a = geometry_object.Point(a[0], a[1])
-                    all.add_point(pos[0], pos[1])
-                    all.add_point(pos[0], pos[1])
-                    all.add_object(Circle(len(all) - 2, len(all) - 1))
+                    ind1 = all.add_point(pos[0], pos[1])
+                    ind2 = all.add_point(pos[0] + 10, pos[1])
+                    all.add_object(Circle(ind1, ind2))
                 elif len(mouse_cors) == 1:
                     a = mouse_cors[0]
                     pos = event.pos
@@ -270,6 +285,8 @@ while running:
 
     for i in all.all_sprites:
         i.init()
+        
+    all.upted()
     # Отрисовка
     screen.fill(WHITE)
     for i in all.sprites():
@@ -283,3 +300,5 @@ while running:
 pygame.quit()
 print(all.all_sprites)
 print(all)
+
+
