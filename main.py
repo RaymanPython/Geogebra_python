@@ -1,5 +1,4 @@
 
-
 import pygame
 import geometry_object
 import random
@@ -88,8 +87,8 @@ class Point(geometry_object.Point):
         pygame.draw.circle(screen, self.color, (self.x, self.y), self.r)
 
 
-WIDTH = 700  # ширина игрового окна
-HEIGHT = 700  # высота игрового окна
+WIDTH = 1000  # ширина игрового окна
+HEIGHT = 1000  # высота игрового окна
 FPS = 30  # частота кадров в секунду
 
 
@@ -107,6 +106,10 @@ class All:
 
     def add_point(self, x, y):
         a = geometry_object.Point(x, y)
+        for i in range(self.__len__()):
+            a = self.point[i]
+            if (x - a.x) ** 2 + (y - a.y) ** 2 <= 25:
+                return i
         self.point.append(Point(x, y))
         return self.__len__() - 1
 
@@ -140,6 +143,9 @@ class All:
     def remove(self, ind):
         self.all_sprites[ind] = None
 
+    def remove_point(self, ind):
+        self.point[ind] = None
+
     def reinit(self, index):
         for i in self.point_conect[index]:
             if type(self.all_sprites[i]) != type(None):
@@ -153,13 +159,42 @@ class All:
                             all.all_sprites[i].__init__(a, b)
 
     def upted(self):
-
         for i in range(self.__len__()):
             for j in range(i + 2, self.__len__()):
                 a = self.point[i]
                 b = self.point[j]
                 if (a.x - b.x) ** 2 + (a.y - b.y) ** 2 <= 25:
                     self.point[j] = self.point[i]
+
+    def sum(self, i , j):
+        for k in range(len(self.all_sprites)):
+            a = self.all_sprites[k]
+            if self.all_sprites[k].A == j:
+                print(True, True)
+                self.all_sprites[k].A = i
+            if self.all_sprites[k].B == j:
+                print(True, False, k, j, i)
+                self.all_sprites[k].B = i
+        print(list(map(str, self.point)))
+        for i in self.all_sprites:
+            print(i.A, i.B)
+
+    def upted_index(self, index):
+        for i in range(self.__len__()):
+            if i == index:
+                continue
+            if type(self.point[i]) == type(None) or type(self.point[index]) == type(None):
+                continue
+            if self.point[i].sq_dist(self.point[index]) <= 25:
+                print(i, index, True)
+                self.sum(i, index)
+        self.remove_point(index)
+        
+    def init(self):
+        for i in range(self.all_)
+
+                
+
 
 # Создаем игру и окно
 pygame.init()
@@ -205,6 +240,7 @@ while running:
                 print(index_move)
                 if type(all.point[index_move]) == Point:
                     all.point[index_move].__init__(pos[0], pos[1])
+                    all.upted_index(index_move)
                     index_move = -1
             elif object_type == 'line':
                 if len(mouse_cors) == 0:
@@ -220,6 +256,7 @@ while running:
                     pos = event.pos
                     all.point[all.all_sprites[-1].A].__init__(a[0], a[1])
                     all.point[all.all_sprites[-1].B].__init__(pos[0], pos[1])
+
                     all.all_sprites[-1].init()
                     mouse_cors = []
             elif object_type == 'circle':
@@ -284,9 +321,10 @@ while running:
     # all.all_sprites.update()
 
     for i in all.all_sprites:
+        if type(i) == type(None):
+            continue
         i.init()
-        
-    all.upted()
+    # all.upted()
     # Отрисовка
     screen.fill(WHITE)
     for i in all.sprites():
