@@ -1,4 +1,5 @@
 
+
 import pygame
 import geometry_object
 import random
@@ -180,18 +181,23 @@ class All:
             print(i.A, i.B)
 
     def upted_index(self, index):
+        remove = False
         for i in range(self.__len__()):
             if i == index:
                 continue
             if type(self.point[i]) == type(None) or type(self.point[index]) == type(None):
                 continue
             if self.point[i].sq_dist(self.point[index]) <= 25:
-                print(i, index, True)
                 self.sum(i, index)
-        self.remove_point(index)
-        
+                remove = True
+        if remove:
+            self.remove_point(index)
+
     def init(self):
-        for i in range(self.all_)
+        for i in range(len(self.all_sprites)):
+            if type(self.all_sprites[i]) != type(None):
+                self.all_sprites[i].init()
+
 
                 
 
@@ -306,6 +312,8 @@ while running:
                     b = event.pos
                     all.point[all.all_sprites[-1].A].__init__(a[0], a[1])
                     all.point[all.all_sprites[-1].B].__init__(b[0], b[1])
+                    all.upted_index(all.all_sprites[-1].A)
+                    all.upted_index(all.all_sprites[-1].B)
                     all.all_sprites[-1].init()
                     # mouse_cors = []
             if index_move != -1:
@@ -320,10 +328,8 @@ while running:
     # Обновление
     # all.all_sprites.update()
 
-    for i in all.all_sprites:
-        if type(i) == type(None):
-            continue
-        i.init()
+    all.init()
+
     # all.upted()
     # Отрисовка
     screen.fill(WHITE)
@@ -338,5 +344,6 @@ while running:
 pygame.quit()
 print(all.all_sprites)
 print(all)
+
 
 
