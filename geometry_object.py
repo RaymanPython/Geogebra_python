@@ -15,6 +15,13 @@ class Point:
             self.x = math.cos(y) * x
             self.y = math.sin(y) * x
 
+    def sq_dist(self, x=None, y=None):
+        if type(y) == type(None):
+            x1, y1 = x.x, x.y
+        else:
+            x1, y1 = x, y
+        return (self.x - x1) ** 2 + (self.y - y1) ** 2
+
     def dist(self, x=0, y=0):
         if type(x) == Point:
             x1, y1 = x.x, x.y
