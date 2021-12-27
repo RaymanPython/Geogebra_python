@@ -21,6 +21,7 @@ class Line(geometry_object.Line):
         self.A = a
         self.B = b
         self.init()
+        self.h = 5
 
     def get_cor(self, x):
         return (x, self.y(x))
@@ -30,18 +31,21 @@ class Line(geometry_object.Line):
             if self.a == 0:
                 return
             else:
-                p1, p2 = (int(-self.c / self.a), 0), (int(-self.c / self.a), 1)
+                p1, p2 = (int(-self.c / self.a), -100), (int(-self.c / self.a), 1000)
         else:
             p1, p2 = self.get_cor(-60), self.get_cor(1000)
         # pygame.draw.line(screen, self.color, (self.A.x, self.A.y), (self.B.x, self.B.y), 5)
-        pygame.draw.line(screen, self.color, p1, p2, 5)
+        pygame.draw.line(screen, self.color, p1, p2, self.h)
         # print(p1, p2)
 
     def init(self):
-        a = point_to_geometry(all.point[self.A])
-        b = point_to_geometry(all.point[self.B])
-        r = a.dist(b)
-        super().__init__(a, b)
+        try:
+            a = point_to_geometry(all.point[self.A])
+            b = point_to_geometry(all.point[self.B])
+            r = a.dist(b)
+            super().__init__(a, b)
+        except:
+            print(all.point[self.A])
 
 
 class Circle(geometry_object.Circle):
@@ -51,13 +55,14 @@ class Circle(geometry_object.Circle):
         self.A = a
         self.B = b
         self.init()
+        self.h = 5
 
     def get_cor(self, x):
         return (x, self.y(x))
 
     def draw(self, screen):
         # pygame.draw.line(screen, self.color, (self.A.x, self.A.y), (self.B.x, self.B.y), 5)
-        pygame.draw.circle(screen, self.color, (self.x,  self.y), self.r, 5)
+        pygame.draw.circle(screen, self.color, (self.x,  self.y), self.r, self.h)
         # print(p1, p2)
 
     def init(self):
@@ -88,8 +93,8 @@ class Point(geometry_object.Point):
         pygame.draw.circle(screen, self.color, (self.x, self.y), self.r)
 
 
-WIDTH = 1000  # ширина игрового окна
-HEIGHT = 1000  # высота игрового окна
+WIDTH = 700 # ширина игрового окна
+HEIGHT = 700  # высота игрового окна
 FPS = 30  # частота кадров в секунду
 
 
@@ -98,6 +103,7 @@ class All:
     def __init__(self):
         self.all_sprites = []
         self.point = []
+
 
     def sprites(self):
         return self.all_sprites + self.point
@@ -145,7 +151,7 @@ class All:
         self.all_sprites[ind] = None
 
     def remove_point(self, ind):
-        self.point[ind] = None
+        self.point[ind] = Point(-100, -100)
 
     def reinit(self, index):
         for i in self.point_conect[index]:
@@ -220,6 +226,20 @@ object_type = 'line'
 sprite_move = -1
 index_move = -1
 all = All()
+delta = 40
+for i in range(20):
+    ind1 = all.add_point(-100,  delta * i)
+    ind2 = all.add_point(-50, delta * i)
+    line = Line(ind1, ind2)
+    line.color = BLUE
+    line.h = 2
+    all.all_sprites.append(line)
+    ind1 = all.add_point(delta * i, -100)
+    ind2 = all.add_point(delta * i, -50)
+    line = Line(ind1, ind2)
+    line.color = BLUE
+    line.h = 2
+    all.all_sprites.append(line)
 while running:
     # Держим цикл на правильной скорости
     clock.tick(FPS)
