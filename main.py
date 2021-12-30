@@ -1,6 +1,7 @@
 
 
 
+
 import pygame
 import pygame_gui
 import geometry_object
@@ -49,8 +50,14 @@ class Line(geometry_object.Line):
             r = a.dist(b)
             super().__init__(a, b)
         except:
-            pass
+            self.removef()
             # # print(all.point[self.A])
+
+    def removef(self):
+        self.show = False
+        self.A = None
+        self.B = None
+
 
 
 class Circle(geometry_object.Circle):
@@ -73,10 +80,22 @@ class Circle(geometry_object.Circle):
         # # # print(p1, p2)
 
     def init(self):
-        a = point_to_geometry(all.point[self.A])
-        b = point_to_geometry(all.point[self.B])
-        r = a.dist(b)
-        super().__init__(a.x, a.y, r)
+        try:
+            a = point_to_geometry(all.point[self.A])
+            b = point_to_geometry(all.point[self.B])
+            if not (a.show and b.show):
+                self.removef()
+                return
+            r = a.dist(b)
+            super().__init__(a.x, a.y, r)
+        except:
+            self.removef()
+
+    def removef(self):
+        self.show = False
+        self.A = None
+        self.B = None
+
 
 
 class Triangle(geometry_object.Triangle):
@@ -97,19 +116,60 @@ class Triangle(geometry_object.Triangle):
             b = self.p[(i + 1) % 3]
             pygame.draw.line(screen, self.color, (a.x, a.y), (b.x,b.y), self.h)
 
+
     def init(self):
-        if self.B == None and self.C == None:
-            a = point_to_geometry(all.point[self.A])
-            super().__init__(a, a, a)
-        elif self.B != None and self.C == None:
-            a = point_to_geometry(all.point[self.A])
-            b = point_to_geometry(all.point[self.B])
-            super().__init__(a, b, b)
-        else:
-            a = point_to_geometry(all.point[self.A])
-            b = point_to_geometry(all.point[self.B])
-            c = point_to_geometry(all.point[self.C])
-            super().__init__(a, b, c)
+        try:
+            if self.B == None and self.C == None:
+                a = point_to_geometry(all.point[self.A])
+                if not (a.show):
+                    self.removef()
+                    return
+                super().__init__(a, a, a)
+            elif self.B != None and self.C == None:
+                a = point_to_geometry(all.point[self.A])
+                b = point_to_geometry(all.point[self.B])
+                super().__init__(a, b, b)
+            else:
+                a = point_to_geometry(all.point[self.A])
+                b = point_to_geometry(all.point[self.B])
+                c = point_to_geometry(all.point[self.C])
+                super().__init__(a, b, c)
+        except:
+            self.removef()
+
+    def removef(self):
+        self.show = False
+        self.A = None
+        self.B = None
+        self.C = None
+
+
+
+class Vcircle(geometry_object.Circle):
+
+    def __init__(self, ind):
+        self.index = ind
+        self.h = 5
+        self.color = BLACK
+        self.show = True
+        self.remove = True
+
+    def draw(self, screen):
+        # pygame.draw.line(screen, self.color, (self.A.x, self.A.y), (self.B.x, self.B.y), 5)
+        pygame.draw.circle(screen, self.color, (self.x,  self.y), self.r, self.h)
+
+    def init(self):
+        try:
+            tr = all.all_sprites[self.index]
+            circle = tr.min_circle()
+            super().__init__(circle.x, circle.y, circle.r)
+        except:
+            self.removef()
+
+    def removef(self):
+        self.show = False
+        self.x = None
+        self.y = None
 
 
 
@@ -131,6 +191,10 @@ class Point(geometry_object.Point):
         else:
             self.color = GREEN
         pygame.draw.circle(screen, self.color, (self.x, self.y), self.r)
+
+    def removef(self):
+        print(self.show)
+        self.show = False
 
 
 
@@ -164,26 +228,9 @@ class All:
 
     def add_object(self, ob):
         # добавление обьекта построенного по двумточками
-        '''
-        :param ind1:
-        :param ind2:
-        :return:
-        x, y = self.all_sprites[ind1].x, self.all_sprites[ind1].y
-        a = geometry_object.Point(x, y)
-        x, y = self.all_sprites[ind2].x, self.all_sprites[ind2].y
-        b = geometry_object.Point()
-        point_conect = dict()
-        '''
         line = ob
         self.all_sprites.append(line)
-        '''
-        for i in range(self.__len__()):
-            if type(self.all_sprites[i]) == Point:
-                p = self.all_sprites[i]
-                p = geometry_object.Point(p.x, p.y)
-                if line.in_to(p, 5):
-                    self.point_conect[i].append(self.__len__() - 1)
-        '''
+
 
     def __str__(self):
         # # print(self.point)
@@ -191,10 +238,10 @@ class All:
 
     def remove(self, ind):
         if self.all_sprites[ind].remove:
-            self.all_sprites[ind] = None
+            self.all_sprites[ind].removef()
 
     def remove_point(self, ind):
-        self.point[ind] = Point(-100, -100)
+        self.point[ind].removef()
 
     def upted(self):
         for i in range(self.__len__()):
@@ -207,6 +254,8 @@ class All:
     def sum(self, i , j):
         for k in range(len(self.all_sprites)):
             a = self.all_sprites[k]
+            if not a.show:
+                continue
             if type(a) == Triangle:
                 if self.all_sprites[k].C == j:
                     self.all_sprites[k].C = i
@@ -233,7 +282,7 @@ class All:
 
     def init(self):
         for i in range(len(self.all_sprites)):
-            if type(self.all_sprites[i]) != type(None):
+            if type(self.all_sprites[i]) != type(None) and self.all_sprites[i].show:
                 self.all_sprites[i].init()
 
 
@@ -256,8 +305,8 @@ clock = pygame.time.Clock()
 
 manager = pygame_gui.UIManager((WIDTH, HEIGHT))
 time_delta = clock.tick(30) / 1000.0
-text = ['прямая', 'окружность', 'треугольник', 'точка', 'удаление', 'переместить']
-text_object = ['line', 'circle', 'triangle', 'point', 'remove', 'poisk']
+text = ['прямая', 'окружность', 'треугольник', 'точка', 'удаление', 'переместить', 'вписанная окружность']
+text_object = ['line', 'circle', 'triangle', 'point', 'remove', 'poisk', 'vcircle']
 button = []
 wb = 100
 hb = 50
@@ -390,6 +439,12 @@ while running:
             elif object_type == 'point':
                 pos = event.pos
                 all.add_point(pos[0], pos[1])
+            elif object_type == 'vcircle':
+                for i in range(len(all.all_sprites)):
+                    if type(all.all_sprites[i]) == Triangle:
+                        pos = event.pos
+                        if all.all_sprites[i].in_to(geometry_object.Point(pos[0], pos[1])):
+                            all.add_object(Vcircle(i))
 
             elif object_type == 'poisk':
                 pos = event.pos
@@ -403,12 +458,12 @@ while running:
                 pos = event.pos
                 p = geometry_object.Point(pos[0], pos[1])
                 for i in range(len(all.all_sprites)):
+                    if not all.all_sprites[i].show:
+                        continue
                     if type(all.all_sprites[i]) != Point and type(all.all_sprites[i]) != type(None):
                         # # # print(i, 'com', type(all.all_sprites[i]))
                         if all.all_sprites[i].in_to(p, 5):
                             all.remove(i)
-                            # # print(i)
-                            all.all_sprites[i] = None
                         # all.all_sprites[i] = None
                 for i in range(len(all.point)):
                     if type(all.point[i]) == Point and type(all.point[i]) != type(None):
@@ -471,6 +526,4 @@ while running:
 pygame.quit()
 # # print(all.all_sprites)
 # # print(all)
-
-
 
