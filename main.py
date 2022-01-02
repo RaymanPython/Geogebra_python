@@ -1,11 +1,8 @@
-
-
-
-
 import pygame
 import pygame_gui
 import geometry_object
 import random
+import Data_save as data
 
 # Задаем цвета
 WHITE = (255, 255, 255)
@@ -58,6 +55,8 @@ class Line(geometry_object.Line):
         self.A = None
         self.B = None
 
+    def __str__(self):
+        return f'Line({self.A}, {self.B})'
 
 
 class Circle(geometry_object.Circle):
@@ -83,9 +82,6 @@ class Circle(geometry_object.Circle):
         try:
             a = point_to_geometry(all.point[self.A])
             b = point_to_geometry(all.point[self.B])
-            if not (a.show and b.show):
-                self.removef()
-                return
             r = a.dist(b)
             super().__init__(a.x, a.y, r)
         except:
@@ -95,6 +91,9 @@ class Circle(geometry_object.Circle):
         self.show = False
         self.A = None
         self.B = None
+
+    def __str__(self):
+        return f'Circle({self.A}, {self.B})'
 
 
 
@@ -115,7 +114,6 @@ class Triangle(geometry_object.Triangle):
             a = self.p[i]
             b = self.p[(i + 1) % 3]
             pygame.draw.line(screen, self.color, (a.x, a.y), (b.x,b.y), self.h)
-
 
     def init(self):
         try:
@@ -142,6 +140,9 @@ class Triangle(geometry_object.Triangle):
         self.A = None
         self.B = None
         self.C = None
+
+    def __str__(self):
+        return f'Triangle({self.A}, {self.B}, {self.C})'
 
 
 
@@ -171,6 +172,9 @@ class Vcircle(geometry_object.Circle):
         self.x = None
         self.y = None
 
+    def __str__(self):
+        return f'Vcircle({self.index})'
+
 
 
 
@@ -196,10 +200,11 @@ class Point(geometry_object.Point):
         print(self.show)
         self.show = False
 
+    def __str__(self):
+        return f'{self.x}, {self.y}'
 
 
-
-WIDTH = 700 # ширина игрового окна
+WIDTH = 900 # ширина игрового окна
 HEIGHT = 700  # высота игрового окна
 FPS = 30  # частота кадров в секунду
 
@@ -286,8 +291,16 @@ class All:
                 self.all_sprites[i].init()
 
 
+def save(all):
+    data.save(all)
 
-
+def open_file():
+    global all
+    all = All()
+    s = data.open()
+    for i in s:
+        print(i)
+        eval(i)
 
 # Создаем игру и окно
 pygame.init()
@@ -305,8 +318,8 @@ clock = pygame.time.Clock()
 
 manager = pygame_gui.UIManager((WIDTH, HEIGHT))
 time_delta = clock.tick(30) / 1000.0
-text = ['прямая', 'окружность', 'треугольник', 'точка', 'удаление', 'переместить', 'вписанная окружность']
-text_object = ['line', 'circle', 'triangle', 'point', 'remove', 'poisk', 'vcircle']
+text = ['прямая', 'окружность', 'треугольник', 'точка', 'удаление', 'переместить', 'вписанная окружность', 'сохранить', 'открыть']
+text_object = ['line', 'circle', 'triangle', 'point', 'remove', 'poisk', 'vcircle', 'save', 'open']
 button = []
 wb = 100
 hb = 50
@@ -355,6 +368,10 @@ while running:
                 for i in range(len(button)):
                     if event.ui_element == button[i]:
                         object_type = text_object[i]
+                        if object_type == 'save':
+                            save(all)
+                        elif object_type == 'open':
+                            open_file()
         if event.type == pygame.KEYDOWN:
             # If pressed key is ESC quit program
             if event.key == pygame.K_1:
@@ -526,4 +543,3 @@ while running:
 pygame.quit()
 # # print(all.all_sprites)
 # # print(all)
-
