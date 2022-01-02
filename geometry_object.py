@@ -33,12 +33,12 @@ class Point:
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y
 
-
     def __str__(self):
-        return str(self.x) + ' ' + str(self.y)
+        return f'{self.x}, {self.y}'
 
 
 class Vector(Point):
+    
     def __init__(self, *s):
         s = list(s)
         if len(s) == 0:
