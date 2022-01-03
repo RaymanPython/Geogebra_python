@@ -276,12 +276,17 @@ class All:
             if type(a) == Triangle:
                 if self.all_sprites[k].C == j:
                     self.all_sprites[k].C = i
-            if self.all_sprites[k].A == j:
-                # # print(True, True)
-                self.all_sprites[k].A = i
-            if self.all_sprites[k].B == j:
-                # # print(True, False, k, j, i)
-                self.all_sprites[k].B = i
+            elif type(a) == Vcircle:
+                return
+            try:
+                if self.all_sprites[k].A == j:
+                    # # print(True, True)
+                    self.all_sprites[k].A = i
+                if self.all_sprites[k].B == j:
+                    # # print(True, False, k, j, i)
+                    self.all_sprites[k].B = i
+            except:
+                pass
         # # print(list(map(str, self.point)))
 
     def upted_index(self, index):
