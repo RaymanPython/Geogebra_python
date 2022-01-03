@@ -110,10 +110,15 @@ class Triangle(geometry_object.Triangle):
         self.remove = True
 
     def draw(self, screen):
-        for i in range(3):
-            a = self.p[i]
-            b = self.p[(i + 1) % 3]
-            pygame.draw.line(screen, self.color, (a.x, a.y), (b.x,b.y), self.h)
+        try:
+            if not self.show:
+                return
+            for i in range(3):
+                a = self.p[i]
+                b = self.p[(i + 1) % 3]
+                pygame.draw.line(screen, self.color, (a.x, a.y), (b.x, b.y), self.h)
+        except:
+            self.removef()
 
     def init(self):
         try:
@@ -190,15 +195,20 @@ class Point(geometry_object.Point):
         self.show = True
 
     def draw(self, screen):
-        if self.move:
-            self.color = BLUE
-        else:
-            self.color = GREEN
-        pygame.draw.circle(screen, self.color, (self.x, self.y), self.r)
+        try:
+            if self.move:
+                self.color = BLUE
+            else:
+                self.color = GREEN
+            pygame.draw.circle(screen, self.color, (self.x, self.y), self.r)
+        except:
+            self.removef()
 
     def removef(self):
         print(self.show)
         self.show = False
+        self.x = None
+        self.y = None
 
     def __str__(self):
         return f'{self.x}, {self.y}'
@@ -226,6 +236,8 @@ class All:
         a = geometry_object.Point(x, y)
         for i in range(self.__len__()):
             a = self.point[i]
+            if not a.show:
+                continue
             if (x - a.x) ** 2 + (y - a.y) ** 2 <= 25:
                 return i
         self.point.append(Point(x, y))
@@ -277,7 +289,7 @@ class All:
         for i in range(self.__len__()):
             if i == index:
                 continue
-            if type(self.point[i]) == type(None) or type(self.point[index]) == type(None):
+            if type(self.point[i]) == type(None) or self.point[index].show == False:
                 continue
             if self.point[i].sq_dist(self.point[index]) <= 25:
                 self.sum(i, index)
@@ -318,14 +330,22 @@ clock = pygame.time.Clock()
 
 manager = pygame_gui.UIManager((WIDTH, HEIGHT))
 time_delta = clock.tick(30) / 1000.0
-text = ['прямая', 'окружность', 'треугольник', 'точка', 'удаление', 'переместить', 'вписанная окружность', 'сохранить', 'открыть']
-text_object = ['line', 'circle', 'triangle', 'point', 'remove', 'poisk', 'vcircle', 'save', 'open']
+text = [['сохранить', 'прямая', 'окружность', 'треугольник', 'точка', 'удаление', 'переместить', 'вписанная окружность'],
+        ['открыть'],
+        ['назад'],
+        ['вперёд']]
+text_object = [['save', 'line', 'circle', 'triangle', 'point', 'remove', 'poisk', 'vcircle'],
+               ['open'],
+               ['-1'],
+               ['+1']]
 button = []
 wb = 100
 hb = 50
 for i in range(len(text)):
-    button.append(pygame_gui.elements.UIButton(relative_rect=pygame.Rect((i * wb + 1, 0), (wb - 2, hb - 2)),
-                                            text=text[i],
+    for j in range(len(text[i])):
+        button.append([])
+        button[i].append(pygame_gui.elements.UIButton(relative_rect=pygame.Rect((i * wb + 1, j * hb), (wb - 2, hb - 2)),
+                                            text=text[i][j],
                                             manager=manager)
                   )
 # all_sprites = []
@@ -340,7 +360,7 @@ sprite_move = -1
 index_move = -1
 all = All()
 delta = 40
-for i in range(20):
+for i in range(25):
     ind1 = all.add_point(-100,  delta * i)
     ind2 = all.add_point(-50, delta * i)
     line = Line(ind1, ind2)
@@ -355,7 +375,12 @@ for i in range(20):
     line.h = 2
     line.remove = False
     all.all_sprites.append(line)
+alls = [all]
+index = 0
+flag = True
 while running:
+    flag = True
+    print(len(alls), index)
     # Держим цикл на правильной скорости
     clock.tick(FPS)
     # Ввод процесса (события)
@@ -366,12 +391,24 @@ while running:
         if event.type == pygame.USEREVENT:
             if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                 for i in range(len(button)):
-                    if event.ui_element == button[i]:
-                        object_type = text_object[i]
-                        if object_type == 'save':
-                            save(all)
-                        elif object_type == 'open':
-                            open_file()
+                    for j in range(len(button[i])):
+                        if event.ui_element == button[i][j]:
+                            object_type = text_object[i][j]
+                            flag = False
+                            if object_type == 'save':
+                                save(all)
+                            elif object_type == 'open':
+                                open_file()
+                            elif object_type == '-1':
+                                if index > 0:
+                                    print(index, 0)
+                                    index -= 1
+                                    all = alls[index]
+                            elif object_type == '+1':
+                                if index < len(alls) - 1:
+                                    print(index, 1)
+                                    index += 1
+                                    all = alls[index]
         if event.type == pygame.KEYDOWN:
             # If pressed key is ESC quit program
             if event.key == pygame.K_1:
@@ -386,8 +423,8 @@ while running:
                 object_type = 'triangle'
             elif event.key == pygame.K_r:
                 object_type = 'remove'
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            if event.pos[1] <= hb:
+        elif event.type == pygame.MOUSEBUTTONDOWN and flag:
+            if event.pos[0] <= wb or event.pos[1] <= 2 * hb:
                 pass
             # print(object_type)
             elif index_move != -1:
@@ -458,10 +495,15 @@ while running:
                 all.add_point(pos[0], pos[1])
             elif object_type == 'vcircle':
                 for i in range(len(all.all_sprites)):
-                    if type(all.all_sprites[i]) == Triangle:
-                        pos = event.pos
-                        if all.all_sprites[i].in_to(geometry_object.Point(pos[0], pos[1])):
-                            all.add_object(Vcircle(i))
+                    if not all.all_sprites[i].show:
+                        continue
+                    try:
+                        if type(all.all_sprites[i]) == Triangle:
+                            pos = event.pos
+                            if all.all_sprites[i].in_to(geometry_object.Point(pos[0], pos[1]), 0):
+                                all.add_object(Vcircle(i))
+                    except:
+                        pass
 
             elif object_type == 'poisk':
                 pos = event.pos
@@ -479,16 +521,17 @@ while running:
                         continue
                     if type(all.all_sprites[i]) != Point and type(all.all_sprites[i]) != type(None):
                         # # # print(i, 'com', type(all.all_sprites[i]))
-                        if all.all_sprites[i].in_to(p, 5):
-                            all.remove(i)
+                        if all.all_sprites[i].show:
+                            if all.all_sprites[i].in_to(p, 5):
+                                all.remove(i)
                         # all.all_sprites[i] = None
                 for i in range(len(all.point)):
                     if type(all.point[i]) == Point and type(all.point[i]) != type(None):
                         # # # print(i, 'com', type(all.all_sprites[i]))
-                        if all.point[i].in_to(p, 5):
-                            all.remove_point(i)
-
-
+                        if all.point[i].show:
+                            if all.point[i].sq_dist(p) <= 25:
+                                all.remove_point(i)
+            alls.append(all)
         elif event.type == pygame.MOUSEMOTION:
             if object_type == 'triangle':
                 if len(mouse_cors) == 0:
