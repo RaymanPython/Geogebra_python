@@ -16,11 +16,14 @@ class Point:
             self.y = math.sin(y) * x
 
     def sq_dist(self, x=None, y=None):
-        if type(y) == type(None):
-            x1, y1 = x.x, x.y
-        else:
-            x1, y1 = x, y
-        return (self.x - x1) ** 2 + (self.y - y1) ** 2
+        try:
+            if type(y) == type(None):
+                x1, y1 = x.x, x.y
+            else:
+                x1, y1 = x, y
+            return (self.x - x1) ** 2 + (self.y - y1) ** 2
+        except:
+            return 10000
 
     def dist(self, x=0, y=0):
         if type(x) == Point:
@@ -33,12 +36,18 @@ class Point:
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y
 
+    def in_to(self, p, eps):
+        try:
+            return self.sq_dist(p) <= eps ** 2
+        except:
+            return False
+
     def __str__(self):
         return f'{self.x}, {self.y}'
 
 
 class Vector(Point):
-    
+
     def __init__(self, *s):
         s = list(s)
         if len(s) == 0:
@@ -316,7 +325,7 @@ class Circle:
         c = line.c
         return Line(a, b, c)
 
-    def cos_line(self, p):
+    def cross_line(self, p):
         if (p.x - self.x) ** 2 + (p.y - self.y) ** 2 > self.r ** 2:
             t = p.dist(self.x, self.y)
             if p.y - self.y < 0:
@@ -390,8 +399,11 @@ class Circle:
                            -xn * math.sin(fi) - yn * math.cos(fi) + self.y)
                 return [p1, p2]
 
-    def in_to(self, p):
-        return (self.x - p.x) ** 2 + (self.y - p.y) ** 2 == self.r ** 2
+    def in_to(self, p, eps=0):
+        try:
+            return (self.r - eps) ** 2 <= abs((self.x - p.x) ** 2 + (self.y - p.y) ** 2 <= (self.r + eps) ** 2)
+        except:
+            return False
 
     def __str__(self):
         return str(self.x) + ' ' + str(self.y) + ' ' + str(self.r)
@@ -464,13 +476,16 @@ class Triangle:
         op = Vector(o, p)
         return (oa ^ op) * (op ^ ob) >= 0
 
-    def in_to(self, point):
-        for i in range(len(self.p)):
-            if self.in_v(self.p[i], self.p[(i - 1) % len(self.p)], self.p[(i + 1) % len(self.p)], point):
-                pass
-            else:
-                return False
-        return True
+    def in_to(self, point, eps):
+        try:
+            for i in range(len(self.p)):
+                if self.in_v(self.p[i], self.p[(i - 1) % len(self.p)], self.p[(i + 1) % len(self.p)], point):
+                    pass
+                else:
+                    return False
+            return True
+        except:
+            return False
 
     def min_circle(self):
         pc = self.midper()
@@ -481,4 +496,14 @@ class Triangle:
             if a * b < 0:
                 pc = Point((self.p[(i - 1) % 3].x + self.p[(i + 1) % 3].x) / 2, (self.p[(i - 1) % 3].y + self.p[(i + 1) % 3].y) / 2)
                 r = self.p[(i - 1) % 3].dist(self.p[(i + 1) % 3]) / 2
+        return Circle(pc.x, pc.y, r)
+
+    def oc(self):
+        pc = self.midper()
+        r = self.op_radius()
+        return Circle(pc.x, pc.y, r)
+
+    def vc(self):
+        pc = self.mid_bisector()
+        r = self.radius()
         return Circle(pc.x, pc.y, r)

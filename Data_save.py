@@ -1,9 +1,11 @@
 import tkinter.filedialog as fd
+import tkinter
 
 TYPE_GEO_PY = '.geopy'
 filetypes = ("Геогебра обьект", TYPE_GEO_PY),
 
 def save(all):
+    tkinter.Tk().withdraw()
     new_file = fd.asksaveasfile(title="Сохранить файл", defaultextension=TYPE_GEO_PY,
                                 filetypes=(filetypes))
     if new_file == None:
@@ -25,11 +27,10 @@ def save(all):
     new_file.close()
 
 def open():
+    tkinter.Tk().withdraw()
     my_file = fd.askopenfile(title="Открыть файл", filetypes=filetypes)
     s = ''
     if my_file:
         s = my_file.readlines()
         my_file.close()
     return s
-
-
