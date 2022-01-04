@@ -1,6 +1,6 @@
 import tkinter.filedialog as fd
 import tkinter
-
+#5
 TYPE_GEO_PY = '.geopy'
 filetypes = ("Геогебра обьект", TYPE_GEO_PY),
 
