@@ -3,6 +3,7 @@ import pygame_gui
 import geometry_object
 import random
 import Data_save as data
+from copy import copy
 
 # Задаем цвета
 WHITE = (255, 255, 255)
@@ -209,6 +210,34 @@ class Ocircle(geometry_object.Circle):
     def __str__(self):
         return f'Vcircle({self.index})'
 
+class Cos(geometry_object.Line):
+
+    def __init__(self, A, B):
+        self.A = A
+        self.B = B
+        self.show = True
+        self.remove = True
+        self.h = 5
+        self.color = BLACK
+
+    def draw(self, screen):
+        po = all.point[self.A]
+        if len(self.li) == 1:
+            pygame.draw.line(screen, self.color, (po.x, po.y), (self.li[0].x, self.li[0].y), self.h)
+        elif len(self.li) == 2:
+            pygame.draw.line(screen, self.color, (po.x, po.y), (self.li[0].x, self.li[0].y), self.h)
+            pygame.draw.line(screen, self.color, (po.x, po.y), (self.li[1].x, self.li[1].y), self.h)
+
+    def init(self):
+        cr = all.all_sprites[self.B]
+        po = all.point[self.A]
+        li = cr.cross_line(po)
+        self.li = li
+        if len(li) > 0:
+            super().__init__(li[0], po)
+        else:
+            pass
+
 
 
 
@@ -249,7 +278,6 @@ FPS = 30  # частота кадров в секунду
 
 
 class All:
-    global alls
 
     def __init__(self):
         self.all_sprites = []
@@ -263,7 +291,6 @@ class All:
         return len(self.point)
 
     def add_point(self, x, y):
-        global alls
         a = geometry_object.Point(x, y)
         for i in range(self.__len__()):
             a = self.point[i]
@@ -272,11 +299,9 @@ class All:
             if a.sq_dist(x, y) <= 25:
                 return i
         self.point.append(Point(x, y))
-        alls.append(self)
         return self.__len__() - 1
 
     def add_object(self, ob):
-        global alls
         # добавление обьекта построенного по двумточками
         line = ob
         self.all_sprites.append(line)
@@ -288,13 +313,11 @@ class All:
         return '5'
 
     def remove(self, ind):
-        global alls
         if self.all_sprites[ind].remove:
             self.all_sprites[ind].removef()
 
 
     def remove_point(self, ind):
-        global alls
         self.point[ind].removef()
 
     def upted(self):
@@ -344,11 +367,12 @@ class All:
             if type(self.all_sprites[i]) != type(None) and self.all_sprites[i].show:
                 self.all_sprites[i].init()
 
-    def poisk(self, p, typeb=True):
-        if typeb:
+    def poisk(self, p, typeb=Point):
+        if typeb != Point:
             for i in range(len(self.all_sprites)):
-                if self.all_sprites[i].in_to(p, 5):
-                    return i
+                if type(self.all_sprites[i]) == typeb:
+                    if self.all_sprites[i].in_to(p, 5):
+                        return i
         else:
             for i in range(len(self.point)):
                 if self.point[i].in_to(p, 5):
@@ -365,11 +389,26 @@ class Alls:
         return len(self.alls)
 
     def append(self, all):
-        index = self.__len__()
-        self.alls.append(all)
+        self.index = self.__len__()
+        self.alls = copy(self.alls) + [(copy(all))]
+
 
     def get(self):
-        return self.alls[self.index]
+        # self.alls[self.index] = All()
+        return copy(self.alls[self.index])
+
+    def rs(self):
+        if self.index > 0:
+            self.index -= 1
+
+    def ss(self):
+        if self.index < self.__len__() - 1:
+            self.index += 1
+
+    def __str__(self):
+        for i in self.alls:
+            print(i.__len__())
+        return str(len(self.alls))
 
 def save(all):
     data.save(all)
@@ -424,7 +463,7 @@ for i in range(len(text)):
 # Цикл игры
 
 running = True
-alls = []
+history = Alls()
 mouse_cors = []
 object_type = ''
 sprite_move = -1
@@ -446,13 +485,13 @@ for i in range(25):
     line.h = 2
     line.remove = False
     all.all_sprites.append(line)
-alls = [all]
 index = 0
 flag = True
 poisk_list = []
+history.append(all)
 while running:
     flag = True
-    print(len(alls), index)
+    print(history, history.index, len(history.get()))
     # Держим цикл на правильной скорости
     clock.tick(FPS)
     # Ввод процесса (события)
@@ -472,15 +511,13 @@ while running:
                             elif object_type == 'open':
                                 open_file()
                             elif object_type == '-1':
-                                if index > 0:
-                                    print(index, 0)
-                                    index -= 1
-                                    all = alls[index]
+                                history.rs()
+                                # all = history.get()
+                                object_type = ''
                             elif object_type == '+1':
-                                if index < len(alls) - 1:
-                                    print(index, 1)
-                                    index += 1
-                                    all = alls[index]
+                                history.ss()
+                                # all = history.get()
+                                object_type = ''
         if event.type == pygame.KEYDOWN:
             # If pressed key is ESC quit program
             if event.key == pygame.K_1:
@@ -580,10 +617,31 @@ while running:
                     except:
                         pass
             elif object_type == 'cos':
-                ind = all.poisk(Point(event.pos[0], event.pos[1]))
+                ind = all.poisk(Point(event.pos[0], event.pos[1]), Point)
+                ind1 = all.poisk(Point(event.pos[0], event.pos[1]), Circle)
                 if ind != -1:
                     if len(poisk_list) == 0:
-                        poisk_list
+                        poisk_list.append((ind, Point))
+                    elif len(poisk_list) == 1:
+                        if poisk_list[0][1] == Point:
+                            poisk_list[0] = (ind, Point)
+                        else:
+                            cs = Cos(ind, poisk_list[0][0])
+                            all.add_object(cs)
+                            poisk_list = []
+                if ind1 != -1:
+                    if len(poisk_list) == 0:
+                        poisk_list.append((ind1, Circle))
+                    elif len(poisk_list) == 1:
+                        if poisk_list[0][1] == Circle:
+                            poisk_list[0] = (ind1, Circle)
+                        else:
+                            cs = Cos(poisk_list[0][0], ind1)
+                            all.add_object(cs)
+                            poisk_list = []
+
+
+
 
             elif object_type == 'poisk':
                 pos = event.pos
@@ -611,6 +669,10 @@ while running:
                         if all.point[i].show:
                             if all.point[i].sq_dist(p) <= 25:
                                 all.remove_point(i)
+            if event.pos[0] <= wb or event.pos[1] <= 2 * hb:
+                pass
+            else:
+                history.append(all)
         elif event.type == pygame.MOUSEMOTION:
             if object_type == 'triangle':
                 if len(mouse_cors) == 0:
