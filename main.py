@@ -23,6 +23,7 @@ def save(all):
 def open_file():
     global all
     all = All()
+    all.draw_setka()
     s = data.open()
     for i in s:
         try:
@@ -76,6 +77,7 @@ object_type = ''
 sprite_move = -1
 index_move = -1
 all = All()
+all.draw_setka()
 index = 0
 flag = True
 poisk_list = []
@@ -103,10 +105,14 @@ while running:
                                 open_file()
                             elif object_type == '-1':
                                 history.rs()
+                                all = All()
+                                all.draw_setka()
                                 all = history.get()
                                 object_type = ''
                             elif object_type == '+1':
                                 history.ss()
+                                all = All()
+                                all.draw_setka()
                                 all = history.get()
                                 object_type = ''
         if event.type == pygame.KEYDOWN:

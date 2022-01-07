@@ -1,5 +1,6 @@
 import pygame
 import geometry_object
+from Draw_object import *
 
 
 def point_to_geometry(a):
@@ -11,17 +12,24 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
+class Draw():
 
-class Line(geometry_object.Line):
+    def __init__(self):
+        self.h = 5
+        self.show = True
+        self.remove = True
+        self.color = BLACK
+        self.move = True
+        self.save = True
+
+class Line(Draw, geometry_object.Line):
 
     def __init__(self, a, b):
         self.color = BLACK
         self.A = a
         self.B = b
         self.init()
-        self.h = 5
-        self.show = True
-        self.remove = True
+        Draw.__init__(self)
 
     def get_cor(self, x):
         return (x, self.y(x))
@@ -44,7 +52,7 @@ class Line(geometry_object.Line):
             a = point_to_geometry(all.point[self.A])
             b = point_to_geometry(all.point[self.B])
             r = a.dist(b)
-            super().__init__(a, b)
+            geometry_object.Line.__init__(self,  a, b)
         except:
             self.removef()
             # # print(all.point[self.A])
@@ -58,16 +66,14 @@ class Line(geometry_object.Line):
         return f'Line({self.A}, {self.B})'
 
 
-class Circle(geometry_object.Circle):
+class Circle(Draw, geometry_object.Circle):
 
     def __init__(self, a, b):
         self.color = BLACK
         self.A = a
         self.B = b
         self.init()
-        self.h = 5
-        self.show = True
-        self.remove = True
+        Draw.__init__(self)
 
     def get_cor(self, x):
         return (x, self.y(x))
@@ -83,7 +89,7 @@ class Circle(geometry_object.Circle):
             a = point_to_geometry(all.point[self.A])
             b = point_to_geometry(all.point[self.B])
             r = a.dist(b)
-            super().__init__(a.x, a.y, r)
+            geometry_object.Circle.__init__(self, a.x, a.y, r)
         except:
             self.removef()
 
@@ -98,17 +104,14 @@ class Circle(geometry_object.Circle):
 
 
 
-class Triangle(geometry_object.Triangle):
+class Triangle(Draw, geometry_object.Triangle):
 
     def __init__(self, a, b=None, c=None):
         self.A = a
         self.B = b
         self.C = c
-        self.h = 5
-        self.color = BLACK
-        self.show = True
         self.init()
-        self.remove = True
+        Draw.__init__(self)
 
     def draw(self, screen):
         try:
@@ -129,16 +132,16 @@ class Triangle(geometry_object.Triangle):
                 if not (a.show):
                     self.removef()
                     return
-                super().__init__(a, a, a)
+                geometry_object.Triangle.__init__(self, a, a, a)
             elif self.B != None and self.C == None:
                 a = point_to_geometry(all.point[self.A])
                 b = point_to_geometry(all.point[self.B])
-                super().__init__(a, b, b)
+                geometry_object.Triangle.__init__(self, a, b, b)
             else:
                 a = point_to_geometry(all.point[self.A])
                 b = point_to_geometry(all.point[self.B])
                 c = point_to_geometry(all.point[self.C])
-                super().__init__(a, b, c)
+                geometry_object.Triangle.__init__(self, a, b, c)
         except:
             self.removef()
 
@@ -157,11 +160,7 @@ class Vcircle(geometry_object.Circle):
 
     def __init__(self, ind):
         self.index = ind
-        self.h = 5
-        self.color = BLACK
-        self.show = True
-        self.remove = True
-
+        Draw.__init__(self)
     def draw(self, screen):
         # pygame.draw.line(screen, self.color, (self.A.x, self.A.y), (self.B.x, self.B.y), 5)
         pygame.draw.circle(screen, self.color, (self.x,  self.y), self.r, self.h)
@@ -171,7 +170,7 @@ class Vcircle(geometry_object.Circle):
         try:
             tr = all.all_sprites[self.index]
             circle = tr.vc()
-            super().__init__(circle.x, circle.y, circle.r)
+            geometry_object.Circle.__init__(self, circle.x, circle.y, circle.r)
         except:
             self.removef()
 
@@ -188,10 +187,7 @@ class Ocircle(geometry_object.Circle):
 
     def __init__(self, ind):
         self.index = ind
-        self.h = 5
-        self.color = BLACK
-        self.show = True
-        self.remove = True
+        Draw.__init__(self)
 
     def draw(self, screen):
         # pygame.draw.line(screen, self.color, (self.A.x, self.A.y), (self.B.x, self.B.y), 5)
@@ -202,7 +198,7 @@ class Ocircle(geometry_object.Circle):
         try:
             tr = all.all_sprites[self.index]
             circle = tr.oc()
-            super().__init__(circle.x, circle.y, circle.r)
+            geometry_object.Circle.__init__(self, circle.x, circle.y, circle.r)
         except:
             self.removef()
 
@@ -219,10 +215,7 @@ class Cos(geometry_object.Line):
     def __init__(self, A, B):
         self.A = A
         self.B = B
-        self.show = True
-        self.remove = True
-        self.h = 5
-        self.color = BLACK
+        Draw.__init__(self)
 
     def draw(self, screen):
         po = all.point[self.A]
@@ -239,23 +232,22 @@ class Cos(geometry_object.Line):
         li = cr.cross_line(po)
         self.li = li
         if len(li) > 0:
-            super().__init__(li[0], po)
+            geometry_object.Line.__init__(self, li[0], po)
         else:
             pass
 
 
 
 
-class Point(geometry_object.Point):
+class Point(Draw, geometry_object.Point):
 
     def __init__(self, x, y):
         # self.color = random.choice([BLUE, RED, GREEN])
+        Draw.__init__(self)
         self.color = BLUE
-        self.move = True
-        super().__init__(x, y)
+        geometry_object.Point.__init__(self, x, y)
         # self.r = random.choice([5,10, 15, 20])
         self.r = 5
-        self.show = True
 
     def draw(self, screen):
         try:

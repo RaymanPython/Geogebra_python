@@ -13,17 +13,23 @@ class All:
         for i in range(25):
             ind1 = self.add_point(-100, delta * i)
             ind2 = self.add_point(-50, delta * i)
+            self.point[ind1].save = False
+            self.point[ind2].save = False
             line = Line(ind1, ind2)
             line.color = BLUE
             line.h = 2
             line.remove = False
+            line.save = False
             self.all_sprites.append(line)
             ind1 = self.add_point(delta * i, -100)
             ind2 = self.add_point(delta * i, -50)
+            self.point[ind1].save = False
+            self.point[ind2].save = False
             line = Line(ind1, ind2)
             line.color = BLUE
             line.h = 2
             line.remove = False
+            line.save = False
             self.all_sprites.append(line)
 
 

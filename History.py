@@ -34,6 +34,7 @@ class His:
     def get(self):
         # self.alls[self.index] = All()
         all = ALL_object.All()
+
         name = self.puth + '/his' + str(self.index)
         now_file = open(name, 'r')
         if now_file:

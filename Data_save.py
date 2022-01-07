@@ -9,17 +9,19 @@ def save_all(all, new_file):
         return
 
     for i in all.point:
-        new_file.write(f'all.add_point({str(i)})' + '\n')
-        arg = i.__dict__
-        #print(type(i).__getnewargs__())
-        for j in arg:
-            new_file.write(f'all.point[-1].__setattr__("{j}", {arg[j]})' + '\n')
+        if i.save:
+            new_file.write(f'all.add_point({str(i)})' + '\n')
+            arg = i.__dict__
+            # print(type(i).__getnewargs__())
+            for j in arg:
+                new_file.write(f'all.point[-1].__setattr__("{j}", {arg[j]})' + '\n')
     for i in all.all_sprites:
-        new_file.write(f'all.add_object({str(i)})' + '\n')
-        arg = i.__dict__
-        # print(i.__getinitargs__())
-        for j in arg:
-            new_file.write(f'all.all_sprites[-1].__setattr__("{j}", {arg[j]})' + '\n')
+        if i.save:
+            new_file.write(f'all.add_object({str(i)})' + '\n')
+            arg = i.__dict__
+            # print(i.__getinitargs__())
+            for j in arg:
+                new_file.write(f'all.all_sprites[-1].__setattr__("{j}", {arg[j]})' + '\n')
 
     new_file.close()
 
