@@ -6,6 +6,8 @@ from copy import copy
 class His:
 
     def __init__(self):
+        os.mkdir(str(random.randint(1, 10000000)), mode=0o777, *, dir_fd=None)
+
         self.alls = []
         self.index = 0
 
