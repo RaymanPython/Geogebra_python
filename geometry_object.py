@@ -400,10 +400,6 @@ class Circle:
                 return [p1, p2]
 
     def in_to(self, p, eps=1):
-        print((self.r - eps ** 2), (self.x - p.x) ** 2 + (self.y - p.y) ** 2, (self.r + eps) ** 2)
-        print(p)
-        print(self.x, self.y)
-        return (self.r - eps) ** 2  <= (self.x - p.x) ** 2 + (self.y - p.y) ** 2 <= (self.r + eps) ** 2
         try:
             return (self.r - eps) ** 2  <= (self.x - p.x) ** 2 + (self.y - p.y) ** 2 <= (self.r + eps) ** 2
         except:

@@ -1,10 +1,9 @@
 import pygame
 import pygame_gui
 import geometry_object
-import random
 import Data_save as data
 from copy import copy
-
+from History import His
 # Задаем цвета
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -381,36 +380,6 @@ class All:
                     return i
 
 
-class Alls:
-
-    def __init__(self):
-        self.alls = []
-        self.index = 0
-
-    def __len__(self):
-        return len(self.alls)
-
-    def append(self, all):
-        self.index = self.__len__()
-        self.alls = copy(self.alls) + [(copy(all))]
-
-
-    def get(self):
-        # self.alls[self.index] = All()
-        return copy(self.alls[self.index])
-
-    def rs(self):
-        if self.index > 0:
-            self.index -= 1
-
-    def ss(self):
-        if self.index < self.__len__() - 1:
-            self.index += 1
-
-    def __str__(self):
-        for i in self.alls:
-            print(i.__len__())
-        return str(len(self.alls))
 
 def save(all):
     data.save(all)
@@ -465,7 +434,7 @@ for i in range(len(text)):
 # Цикл игры
 
 running = True
-history = Alls()
+history = His()
 mouse_cors = []
 object_type = ''
 sprite_move = -1
@@ -493,7 +462,7 @@ poisk_list = []
 history.append(all)
 while running:
     flag = True
-    # print(history, history.index, len(history.get()))
+    print(history, history.index, len(history.get()))
     # Держим цикл на правильной скорости
     clock.tick(FPS)
     # Ввод процесса (события)
