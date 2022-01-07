@@ -399,7 +399,9 @@ class Circle:
                            -xn * math.sin(fi) - yn * math.cos(fi) + self.y)
                 return [p1, p2]
 
-    def in_to(self, p, eps=0):
+    def in_to(self, p, eps=1):
+        eps = 1
+        return (self.r - eps) ** 2 <= abs((self.x - p.x) ** 2 + (self.y - p.y) ** 2 <= (self.r + eps) ** 2)
         try:
             return (self.r - eps) ** 2 <= abs((self.x - p.x) ** 2 + (self.y - p.y) ** 2 <= (self.r + eps) ** 2)
         except:
