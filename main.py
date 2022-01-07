@@ -4,6 +4,8 @@ import geometry_object
 import Data_save as data
 from copy import copy
 from History import His
+from ALL_object import All
+from Draw_object import *
 # Задаем цвета
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -11,375 +13,9 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 
-def point_to_geometry(a):
-    return geometry_object.Point(a.x, a.y)
-
-class Line(geometry_object.Line):
-
-    def __init__(self, a, b):
-        self.color = BLACK
-        self.A = a
-        self.B = b
-        self.init()
-        self.h = 5
-        self.show = True
-        self.remove = True
-
-    def get_cor(self, x):
-        return (x, self.y(x))
-
-    def draw(self, screen):
-        if self.b == 0:
-            if self.a == 0:
-                return
-            else:
-                p1, p2 = (int(-self.c / self.a), -100), (int(-self.c / self.a), 1000)
-        else:
-            p1, p2 = self.get_cor(-60), self.get_cor(1000)
-        # pygame.draw.line(screen, self.color, (self.A.x, self.A.y), (self.B.x, self.B.y), 5)
-        pygame.draw.line(screen, self.color, p1, p2, self.h)
-        # # # print(p1, p2)
-
-    def init(self):
-        try:
-            a = point_to_geometry(all.point[self.A])
-            b = point_to_geometry(all.point[self.B])
-            r = a.dist(b)
-            super().__init__(a, b)
-        except:
-            self.removef()
-            # # print(all.point[self.A])
-
-    def removef(self):
-        self.show = False
-        self.A = None
-        self.B = None
-
-    def __str__(self):
-        return f'Line({self.A}, {self.B})'
-
-
-class Circle(geometry_object.Circle):
-
-    def __init__(self, a, b):
-        self.color = BLACK
-        self.A = a
-        self.B = b
-        self.init()
-        self.h = 5
-        self.show = True
-        self.remove = True
-
-    def get_cor(self, x):
-        return (x, self.y(x))
-
-    def draw(self, screen):
-        # pygame.draw.line(screen, self.color, (self.A.x, self.A.y), (self.B.x, self.B.y), 5)
-        pygame.draw.circle(screen, self.color, (self.x,  self.y), self.r, self.h)
-        # # # print(p1, p2)
-
-    def init(self):
-        try:
-            a = point_to_geometry(all.point[self.A])
-            b = point_to_geometry(all.point[self.B])
-            r = a.dist(b)
-            super().__init__(a.x, a.y, r)
-        except:
-            self.removef()
-
-    def removef(self):
-        print(Circle)
-        self.show = False
-        self.A = None
-        self.B = None
-
-    def __str__(self):
-        return f'Circle({self.A}, {self.B})'
-
-
-
-class Triangle(geometry_object.Triangle):
-
-    def __init__(self, a, b=None, c=None):
-        self.A = a
-        self.B = b
-        self.C = c
-        self.h = 5
-        self.color = BLACK
-        self.show = True
-        self.init()
-        self.remove = True
-
-    def draw(self, screen):
-        try:
-            if not self.show:
-                return
-            for i in range(3):
-                a = self.p[i]
-                b = self.p[(i + 1) % 3]
-                pygame.draw.line(screen, self.color, (a.x, a.y), (b.x, b.y), self.h)
-        except:
-            self.removef()
-
-    def init(self):
-        try:
-            if self.B == None and self.C == None:
-                a = point_to_geometry(all.point[self.A])
-                if not (a.show):
-                    self.removef()
-                    return
-                super().__init__(a, a, a)
-            elif self.B != None and self.C == None:
-                a = point_to_geometry(all.point[self.A])
-                b = point_to_geometry(all.point[self.B])
-                super().__init__(a, b, b)
-            else:
-                a = point_to_geometry(all.point[self.A])
-                b = point_to_geometry(all.point[self.B])
-                c = point_to_geometry(all.point[self.C])
-                super().__init__(a, b, c)
-        except:
-            self.removef()
-
-    def removef(self):
-        self.show = False
-        self.A = None
-        self.B = None
-        self.C = None
-
-    def __str__(self):
-        return f'Triangle({self.A}, {self.B}, {self.C})'
-
-
-
-class Vcircle(geometry_object.Circle):
-
-    def __init__(self, ind):
-        self.index = ind
-        self.h = 5
-        self.color = BLACK
-        self.show = True
-        self.remove = True
-
-    def draw(self, screen):
-        # pygame.draw.line(screen, self.color, (self.A.x, self.A.y), (self.B.x, self.B.y), 5)
-        pygame.draw.circle(screen, self.color, (self.x,  self.y), self.r, self.h)
-
-    def init(self):
-        try:
-            tr = all.all_sprites[self.index]
-            circle = tr.vc()
-            super().__init__(circle.x, circle.y, circle.r)
-        except:
-            self.removef()
-
-    def removef(self):
-        print(Circle)
-        self.show = False
-        self.x = None
-        self.y = None
-
-    def __str__(self):
-        return f'Vcircle({self.index})'
-
-class Ocircle(geometry_object.Circle):
-
-    def __init__(self, ind):
-        self.index = ind
-        self.h = 5
-        self.color = BLACK
-        self.show = True
-        self.remove = True
-
-    def draw(self, screen):
-        # pygame.draw.line(screen, self.color, (self.A.x, self.A.y), (self.B.x, self.B.y), 5)
-        pygame.draw.circle(screen, self.color, (self.x,  self.y), self.r, self.h)
-
-    def init(self):
-        try:
-            tr = all.all_sprites[self.index]
-            circle = tr.oc()
-            super().__init__(circle.x, circle.y, circle.r)
-        except:
-            self.removef()
-
-    def removef(self):
-        self.show = False
-        self.x = None
-        self.y = None
-
-    def __str__(self):
-        return f'Vcircle({self.index})'
-
-class Cos(geometry_object.Line):
-
-    def __init__(self, A, B):
-        self.A = A
-        self.B = B
-        self.show = True
-        self.remove = True
-        self.h = 5
-        self.color = BLACK
-
-    def draw(self, screen):
-        po = all.point[self.A]
-        if len(self.li) == 1:
-            pygame.draw.line(screen, self.color, (po.x, po.y), (self.li[0].x, self.li[0].y), self.h)
-        elif len(self.li) == 2:
-            pygame.draw.line(screen, self.color, (po.x, po.y), (self.li[0].x, self.li[0].y), self.h)
-            pygame.draw.line(screen, self.color, (po.x, po.y), (self.li[1].x, self.li[1].y), self.h)
-
-    def init(self):
-        cr = all.all_sprites[self.B]
-        po = all.point[self.A]
-        li = cr.cross_line(po)
-        self.li = li
-        if len(li) > 0:
-            super().__init__(li[0], po)
-        else:
-            pass
-
-
-
-
-class Point(geometry_object.Point):
-
-    def __init__(self, x, y):
-        # self.color = random.choice([BLUE, RED, GREEN])
-        self.color = BLUE
-        self.move = True
-        super().__init__(x, y)
-        # self.r = random.choice([5,10, 15, 20])
-        self.r = 5
-        self.show = True
-
-    def draw(self, screen):
-        try:
-            if self.move:
-                self.color = BLUE
-            else:
-                self.color = GREEN
-            pygame.draw.circle(screen, self.color, (self.x, self.y), self.r)
-        except:
-            pass
-
-    def removef(self):
-        print(self.show)
-        self.show = False
-        self.x = None
-        self.y = None
-
-    def __str__(self):
-        return f'{self.x}, {self.y}'
-
-
 WIDTH = 900 # ширина игрового окна
 HEIGHT = 700  # высота игрового окна
 FPS = 30  # частота кадров в секунду
-
-
-class All:
-
-    def __init__(self):
-        self.all_sprites = []
-        self.point = []
-
-
-    def sprites(self):
-        return self.all_sprites + self.point
-
-    def __len__(self):
-        return len(self.point)
-
-    def add_point(self, x, y):
-        a = geometry_object.Point(x, y)
-        for i in range(self.__len__()):
-            a = self.point[i]
-            if not a.show:
-                continue
-            if a.sq_dist(x, y) <= 25:
-                return i
-        self.point.append(Point(x, y))
-        return self.__len__() - 1
-
-    def add_object(self, ob):
-        # добавление обьекта построенного по двумточками
-        line = ob
-        self.all_sprites.append(line)
-
-
-
-    def __str__(self):
-        # # print(self.point)
-        return '5'
-
-    def remove(self, ind):
-        if self.all_sprites[ind].remove:
-            self.all_sprites[ind].removef()
-
-
-    def remove_point(self, ind):
-        self.point[ind].removef()
-
-    def upted(self):
-        for i in range(self.__len__()):
-            for j in range(i + 2, self.__len__()):
-                a = self.point[i]
-                b = self.point[j]
-                if (a.x - b.x) ** 2 + (a.y - b.y) ** 2 <= 25:
-                    self.point[j] = self.point[i]
-
-    def sum(self, i , j):
-        for k in range(len(self.all_sprites)):
-            a = self.all_sprites[k]
-            if not a.show:
-                continue
-            if type(a) == Triangle:
-                if self.all_sprites[k].C == j:
-                    self.all_sprites[k].C = i
-            elif type(a) == Vcircle:
-                return
-            try:
-                if self.all_sprites[k].A == j:
-                    # # print(True, True)
-                    self.all_sprites[k].A = i
-                if self.all_sprites[k].B == j:
-                    # # print(True, False, k, j, i)
-                    self.all_sprites[k].B = i
-            except:
-                pass
-        # # print(list(map(str, self.point)))
-
-    def upted_index(self, index):
-        remove = False
-        for i in range(self.__len__()):
-            if i == index:
-                continue
-            if type(self.point[i]) == type(None) or self.point[index].show == False:
-                continue
-            if self.point[i].sq_dist(self.point[index]) <= 25:
-                self.sum(i, index)
-                remove = True
-        if remove:
-            self.remove_point(index)
-
-    def init(self):
-        for i in range(len(self.all_sprites)):
-            if type(self.all_sprites[i]) != type(None) and self.all_sprites[i].show:
-                self.all_sprites[i].init()
-
-    def poisk(self, p, typeb=Point):
-        if typeb != Point:
-            for i in range(len(self.all_sprites)):
-                if type(self.all_sprites[i]) == typeb:
-                    if self.all_sprites[i].in_to(p, 5):
-                        return i
-        else:
-            for i in range(len(self.point)):
-                if self.point[i].in_to(p, 5):
-                    return i
-
-
 
 def save(all):
     data.save(all)
@@ -440,29 +76,13 @@ object_type = ''
 sprite_move = -1
 index_move = -1
 all = All()
-delta = 40
-for i in range(25):
-    ind1 = all.add_point(-100,  delta * i)
-    ind2 = all.add_point(-50, delta * i)
-    line = Line(ind1, ind2)
-    line.color = BLUE
-    line.h = 2
-    line.remove = False
-    all.all_sprites.append(line)
-    ind1 = all.add_point(delta * i, -100)
-    ind2 = all.add_point(delta * i, -50)
-    line = Line(ind1, ind2)
-    line.color = BLUE
-    line.h = 2
-    line.remove = False
-    all.all_sprites.append(line)
 index = 0
 flag = True
 poisk_list = []
 history.append(all)
 while running:
     flag = True
-    print(history, history.index, len(history.get()))
+    # print(history, history.index, len(history.get()))
     # Держим цикл на правильной скорости
     clock.tick(FPS)
     # Ввод процесса (события)
@@ -483,11 +103,11 @@ while running:
                                 open_file()
                             elif object_type == '-1':
                                 history.rs()
-                                # all = history.get()
+                                all = history.get()
                                 object_type = ''
                             elif object_type == '+1':
                                 history.ss()
-                                # all = history.get()
+                                all = history.get()
                                 object_type = ''
         if event.type == pygame.KEYDOWN:
             # If pressed key is ESC quit program

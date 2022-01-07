@@ -4,10 +4,7 @@ import tkinter
 TYPE_GEO_PY = '.geopy'
 filetypes = ("Геогебра обьект", TYPE_GEO_PY),
 
-def save(all):
-    tkinter.Tk().withdraw()
-    new_file = fd.asksaveasfile(title="Сохранить файл", defaultextension=TYPE_GEO_PY,
-                                filetypes=(filetypes))
+def save_all(all, new_file):
     if new_file == None:
         return
 
@@ -25,6 +22,13 @@ def save(all):
             new_file.write(f'all.all_sprites[-1].__setattr__("{j}", {arg[j]})' + '\n')
 
     new_file.close()
+
+
+def save(all):
+    tkinter.Tk().withdraw()
+    new_file = fd.asksaveasfile(title="Сохранить файл", defaultextension=TYPE_GEO_PY,
+                                filetypes=(filetypes))
+    save_all(all, new_file)
 
 def open():
     tkinter.Tk().withdraw()
