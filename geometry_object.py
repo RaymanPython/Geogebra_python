@@ -400,10 +400,12 @@ class Circle:
                 return [p1, p2]
 
     def in_to(self, p, eps=1):
-        eps = 1
-        return (self.r - eps) ** 2 <= abs((self.x - p.x) ** 2 + (self.y - p.y) ** 2 <= (self.r + eps) ** 2)
+        print((self.r - eps ** 2), (self.x - p.x) ** 2 + (self.y - p.y) ** 2, (self.r + eps) ** 2)
+        print(p)
+        print(self.x, self.y)
+        return (self.r - eps) ** 2  <= (self.x - p.x) ** 2 + (self.y - p.y) ** 2 <= (self.r + eps) ** 2
         try:
-            return (self.r - eps) ** 2 <= abs((self.x - p.x) ** 2 + (self.y - p.y) ** 2 <= (self.r + eps) ** 2)
+            return (self.r - eps) ** 2  <= (self.x - p.x) ** 2 + (self.y - p.y) ** 2 <= (self.r + eps) ** 2
         except:
             return False
 
@@ -478,7 +480,17 @@ class Triangle:
         op = Vector(o, p)
         return (oa ^ op) * (op ^ ob) >= 0
 
-    def in_to(self, point, eps):
+    def in_to(self, point, eps=5):
+        for i in range(3):
+            a = self.p[i]
+            b = self.p[(i + 1) % 3]
+            if Line(a, b).in_to(point, eps):
+                if (abs(a.x - b.x) - (abs(point.x - a.x) + abs(point.x - b.x))) ** 2 <= eps ** 2:
+                    if (abs(a.y - b.y) - (abs(point.y - a.y) + abs(point.y - b.y))) ** 2 <= eps ** 2:
+                        return True
+        return False
+
+    def in_to_s(self, point, eps=5):
         try:
             for i in range(len(self.p)):
                 if self.in_v(self.p[i], self.p[(i - 1) % len(self.p)], self.p[(i + 1) % len(self.p)], point):

@@ -89,6 +89,7 @@ class Circle(geometry_object.Circle):
             self.removef()
 
     def removef(self):
+        print(Circle)
         self.show = False
         self.A = None
         self.B = None
@@ -174,6 +175,7 @@ class Vcircle(geometry_object.Circle):
             self.removef()
 
     def removef(self):
+        print(Circle)
         self.show = False
         self.x = None
         self.y = None
@@ -491,7 +493,7 @@ poisk_list = []
 history.append(all)
 while running:
     flag = True
-    print(history, history.index, len(history.get()))
+    # print(history, history.index, len(history.get()))
     # Держим цикл на правильной скорости
     clock.tick(FPS)
     # Ввод процесса (события)
