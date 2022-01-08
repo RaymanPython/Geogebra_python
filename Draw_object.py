@@ -62,6 +62,12 @@ class Line(Draw, geometry_object.Line):
         self.A = None
         self.B = None
 
+    def cross(self, ob):
+        points = []
+        if type(ob) == Line:
+            return self.cross(ob)
+        return []
+
     def __str__(self):
         return f'Line({self.A}, {self.B})'
 
@@ -98,6 +104,9 @@ class Circle(Draw, geometry_object.Circle):
         self.show = False
         self.A = None
         self.B = None
+
+    def cross(self, line):
+        return []
 
     def __str__(self):
         return f'Circle({self.A}, {self.B})'
@@ -151,6 +160,9 @@ class Triangle(Draw, geometry_object.Triangle):
         self.B = None
         self.C = None
 
+    def cross(self, line):
+        return []
+
     def __str__(self):
         return f'Triangle({self.A}, {self.B}, {self.C})'
 
@@ -180,6 +192,9 @@ class Vcircle(geometry_object.Circle):
         self.x = None
         self.y = None
 
+    def cross(self, line):
+        return []
+
     def __str__(self):
         return f'Vcircle({self.index})'
 
@@ -206,6 +221,9 @@ class Ocircle(geometry_object.Circle):
         self.show = False
         self.x = None
         self.y = None
+
+    def cross(self, line):
+        return []
 
     def __str__(self):
         return f'Vcircle({self.index})'
@@ -235,6 +253,12 @@ class Cos(geometry_object.Line):
             geometry_object.Line.__init__(self, li[0], po)
         else:
             pass
+
+    def cross(self, line):
+        return []
+
+    def __str__(self):
+        return f'Cos({self.A}, {self.B})'
 
 
 
