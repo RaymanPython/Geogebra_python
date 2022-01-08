@@ -22,6 +22,9 @@ class Draw():
         self.move = True
         self.save = True
 
+    def cross(self, ob):
+        return []
+
 class Line(Draw, geometry_object.Line):
 
     def __init__(self, a, b):

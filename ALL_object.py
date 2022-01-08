@@ -113,6 +113,7 @@ class All:
         for i in range(len(self.all_sprites)):
             if type(self.all_sprites[i]) != type(None) and self.all_sprites[i].show:
                 self.all_sprites[i].init()
+        self.cross()
 
     def poisk(self, p, typeb=Point):
         if typeb != Point:
@@ -124,3 +125,13 @@ class All:
             for i in range(len(self.point)):
                 if self.point[i].in_to(p, 5):
                     return i
+
+    def cross(self):
+        for i in range(len(self.all_sprites)):
+            for j in range(i + 1, len(self.all_sprites)):
+                a = self.all_sprites[i]
+                b = self.all_sprites[j]
+                points = a.cross(b)
+                print(points)
+                for i in points:
+                    self.add_point(i.x, i.y)
