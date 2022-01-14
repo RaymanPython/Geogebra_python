@@ -1,5 +1,7 @@
 import geometry_object
 from Draw_object import *
+
+
 # класс хранящий все объекты
 
 class All:
@@ -32,7 +34,6 @@ class All:
             line.save = False
             self.all_sprites.append(line)
 
-
     def sprites(self):
         return self.all_sprites + self.point
 
@@ -42,18 +43,19 @@ class All:
     def add_point(self, x, y):
         for i in range(self.__len__()):
             a = self.point[i]
-            if not a.show:
+            try:
+                if a.sq_dist(x, y) <= 25:
+                    self.point[i].show = True
+                    return i
+            except:
                 continue
-            if a.sq_dist(x, y) <= 25:
-                return i
         self.point.append(Point(x, y))
         return self.__len__() - 1
 
     def add_object(self, object):
         # добавление обьекта построенного по двумточками
         self.all_sprites.append(object)
-
-
+        self.cross()
 
     def __str__(self):
         # # print(self.point)
@@ -62,7 +64,6 @@ class All:
     def remove(self, ind):
         if self.all_sprites[ind].remove:
             self.all_sprites[ind].removef()
-
 
     def remove_point(self, ind):
         self.point[ind].removef()
@@ -75,7 +76,7 @@ class All:
                 if (a.x - b.x) ** 2 + (a.y - b.y) ** 2 <= 25:
                     self.point[j] = self.point[i]
 
-    def sum(self, i , j):
+    def sum(self, i, j):
         for k in range(len(self.all_sprites)):
             a = self.all_sprites[k]
             if not a.show:
@@ -113,7 +114,7 @@ class All:
         for i in range(len(self.all_sprites)):
             if type(self.all_sprites[i]) != type(None) and self.all_sprites[i].show:
                 self.all_sprites[i].init()
-        self.cross()
+        # self.cross()
 
     def poisk(self, p, typeb=Point):
         if typeb != Point:
@@ -132,6 +133,6 @@ class All:
                 a = self.all_sprites[i]
                 b = self.all_sprites[j]
                 points = a.cross(b)
-                print(points)
-                for i in points:
-                    self.add_point(i.x, i.y)
+                for point in points:
+                    ind = self.add_point(point.x, point.y)
+                    self.point[ind].show = False

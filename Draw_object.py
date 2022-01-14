@@ -6,11 +6,13 @@ from Draw_object import *
 def point_to_geometry(a):
     return geometry_object.Point(a.x, a.y)
 
+
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
+
 
 class Draw():
 
@@ -24,6 +26,7 @@ class Draw():
 
     def cross(self, ob):
         return []
+
 
 class Line(Draw, geometry_object.Line):
 
@@ -55,7 +58,7 @@ class Line(Draw, geometry_object.Line):
             a = point_to_geometry(all.point[self.A])
             b = point_to_geometry(all.point[self.B])
             r = a.dist(b)
-            geometry_object.Line.__init__(self,  a, b)
+            geometry_object.Line.__init__(self, a, b)
         except:
             self.removef()
             # # print(all.point[self.A])
@@ -68,7 +71,7 @@ class Line(Draw, geometry_object.Line):
     def cross(self, ob):
         points = []
         if type(ob) == Line:
-            return self.cross(ob)
+            return self.cross_Line(ob)
         return []
 
     def __str__(self):
@@ -89,7 +92,7 @@ class Circle(Draw, geometry_object.Circle):
 
     def draw(self, screen):
         # pygame.draw.line(screen, self.color, (self.A.x, self.A.y), (self.B.x, self.B.y), 5)
-        pygame.draw.circle(screen, self.color, (self.x,  self.y), self.r, self.h)
+        pygame.draw.circle(screen, self.color, (self.x, self.y), self.r, self.h)
         # # # print(p1, p2)
 
     def init(self):
@@ -113,7 +116,6 @@ class Circle(Draw, geometry_object.Circle):
 
     def __str__(self):
         return f'Circle({self.A}, {self.B})'
-
 
 
 class Triangle(Draw, geometry_object.Triangle):
@@ -170,15 +172,15 @@ class Triangle(Draw, geometry_object.Triangle):
         return f'Triangle({self.A}, {self.B}, {self.C})'
 
 
-
 class Vcircle(geometry_object.Circle):
 
     def __init__(self, ind):
         self.index = ind
         Draw.__init__(self)
+
     def draw(self, screen):
         # pygame.draw.line(screen, self.color, (self.A.x, self.A.y), (self.B.x, self.B.y), 5)
-        pygame.draw.circle(screen, self.color, (self.x,  self.y), self.r, self.h)
+        pygame.draw.circle(screen, self.color, (self.x, self.y), self.r, self.h)
 
     def init(self):
         from main import all
@@ -201,6 +203,7 @@ class Vcircle(geometry_object.Circle):
     def __str__(self):
         return f'Vcircle({self.index})'
 
+
 class Ocircle(geometry_object.Circle):
 
     def __init__(self, ind):
@@ -209,7 +212,7 @@ class Ocircle(geometry_object.Circle):
 
     def draw(self, screen):
         # pygame.draw.line(screen, self.color, (self.A.x, self.A.y), (self.B.x, self.B.y), 5)
-        pygame.draw.circle(screen, self.color, (self.x,  self.y), self.r, self.h)
+        pygame.draw.circle(screen, self.color, (self.x, self.y), self.r, self.h)
 
     def init(self):
         from main import all
@@ -230,6 +233,7 @@ class Ocircle(geometry_object.Circle):
 
     def __str__(self):
         return f'Vcircle({self.index})'
+
 
 class Cos(geometry_object.Line):
 
@@ -264,8 +268,6 @@ class Cos(geometry_object.Line):
         return f'Cos({self.A}, {self.B})'
 
 
-
-
 class Point(Draw, geometry_object.Point):
 
     def __init__(self, x, y):
@@ -285,6 +287,44 @@ class Point(Draw, geometry_object.Point):
             pygame.draw.circle(screen, self.color, (self.x, self.y), self.r)
         except:
             pass
+
+    def removef(self):
+        print(self.show)
+        self.show = False
+        self.x = None
+        self.y = None
+
+    def __str__(self):
+        return f'{self.x}, {self.y}'
+
+
+class Cross_Point(Draw, geometry_object.Point):
+
+    def __init__(self, A, B, ind):
+        # self.color = random.choice([BLUE, RED, GREEN])
+        Draw.__init__(self)
+        self.color = BLUE
+        # self.r = random.choice([5,10, 15, 20])
+        self.r = 5
+        self.A = A
+        self.B = B
+        self.ind = ind
+        self.init()
+
+    def draw(self, screen):
+        try:
+            if self.move:
+                self.color = BLUE
+            else:
+                self.color = GREEN
+            pygame.draw.circle(screen, self.color, (self.x, self.y), self.r)
+        except:
+            pass
+
+    def init(self):
+        from main import all
+        points = all.all_sprite[self.A].cross(all.all_sprites[self.B])
+        geometry_object.Point.__init__(self, points[self.ind].x, points[self.ind].y)
 
     def removef(self):
         print(self.show)

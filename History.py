@@ -4,6 +4,8 @@ from copy import copy
 import Data_save
 import ALL_object
 from Draw_object import *
+
+
 # класс истории изменений
 class His:
 
@@ -29,7 +31,6 @@ class His:
                 self.alls.pop(self.index + 1)
         self.index = self.__len__()
         self.alls.append(self.new(all))
-
 
     def get(self):
         # self.alls[self.index] = All()

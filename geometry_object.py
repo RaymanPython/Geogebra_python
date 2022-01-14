@@ -71,7 +71,7 @@ class Vector(Point):
         return self.x * other.x + self.y * other.y
 
     def vector_product(self, other):
-        return self.x * other.y - other.x * self.y
+        return self.x * other.yq other.x * self.y
 
     def __xor__(self, other):
         return self.vector_product(other)
@@ -234,11 +234,11 @@ class Line:
         c2 = -(n * p1)
         return Line(self.a, self.b, c2)
 
-    def cross(self, line1):
+    def cross_Line(self, line1):
         if self == line1:
-            return [2]
+            return []
         elif self.is_parallel(line1):
-            return [0]
+            return []
         y = (line1.c * self.a - self.c * line1.a) / (self.b * line1.a - line1.b * self.a)
         x = (line1.c * self.b - self.c * line1.b) / (self.a * line1.b - line1.a * self.b)
         p = Point(x, y)
