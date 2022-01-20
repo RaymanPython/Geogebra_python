@@ -270,13 +270,14 @@ class Cos(geometry_object.Line):
 
 class Point(Draw, geometry_object.Point):
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, name=None):
         # self.color = random.choice([BLUE, RED, GREEN])
         Draw.__init__(self)
         self.color = BLUE
         geometry_object.Point.__init__(self, x, y)
         # self.r = random.choice([5,10, 15, 20])
         self.r = 5
+        self.name = name
 
     def draw(self, screen):
         try:
@@ -284,6 +285,13 @@ class Point(Draw, geometry_object.Point):
                 self.color = BLUE
             else:
                 self.color = GREEN
+            font = pygame.font.Font(None, 30)
+            text = font.render(
+                self.name, True, (0, 100, 0))
+            place = text.get_rect(
+                center=(self.x, self.y - 20))
+            screen.blit(text, place)
+
             pygame.draw.circle(screen, self.color, (self.x, self.y), self.r)
         except:
             pass

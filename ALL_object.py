@@ -1,7 +1,6 @@
 import geometry_object
 from Draw_object import *
-
-
+from class_name_point import Name_Point
 # класс хранящий все объекты
 
 class All:
@@ -9,6 +8,7 @@ class All:
     def __init__(self):
         self.all_sprites = []
         self.point = []
+        self.point_names = Name_Point()
 
     def draw_setka(self):
         delta = 40
@@ -49,7 +49,7 @@ class All:
                     return i
             except:
                 continue
-        self.point.append(Point(x, y))
+        self.point.append(Point(x, y, self.point_names.append()))
         return self.__len__() - 1
 
     def add_object(self, object):
@@ -136,3 +136,8 @@ class All:
                 for point in points:
                     ind = self.add_point(point.x, point.y)
                     self.point[ind].show = False
+
+    def move(self, x, y):
+        for i in range(len(self.point)):
+            self.point[i].x += x
+            self.point[i].y += y

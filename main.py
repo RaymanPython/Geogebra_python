@@ -129,6 +129,8 @@ while running:
                 object_type = 'triangle'
             elif event.key == pygame.K_r:
                 object_type = 'remove'
+            elif event.key == pygame.K_a:
+                all.move(10, 0)
         elif event.type == pygame.MOUSEBUTTONDOWN and flag:
             if event.pos[0] <= wb or event.pos[1] <= 2 * hb:
                 pass

@@ -71,7 +71,7 @@ class Vector(Point):
         return self.x * other.x + self.y * other.y
 
     def vector_product(self, other):
-        return self.x * other.yq other.x * self.y
+        return self.x * other.y - other.x * self.y
 
     def __xor__(self, other):
         return self.vector_product(other)

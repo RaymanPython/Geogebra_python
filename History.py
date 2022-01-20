@@ -20,7 +20,7 @@ class His:
         return len(self.alls)
 
     def new(self, all):
-        name = self.puth + '/his' + str(self.__len__())
+        name = self.puth + '/his' + str(self.__len__()) + '.geopy'
         f = open(name, 'w')
         Data_save.save_all(all, f)
         return name
