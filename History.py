@@ -36,7 +36,7 @@ class His:
         # self.alls[self.index] = All()
         all = ALL_object.All()
 
-        name = self.puth + '/his' + str(self.index)
+        name = self.puth + '/his' + str(self.index) + '.geopy'
         now_file = open(name, 'r')
         if now_file:
             s = now_file.readlines()
@@ -45,7 +45,7 @@ class His:
             try:
                 eval(i)
             except:
-                pas
+                pass
         print(all)
         return all
 

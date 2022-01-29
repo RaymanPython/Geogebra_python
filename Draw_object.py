@@ -268,7 +268,7 @@ class Cos(geometry_object.Line):
         return f'Cos({self.A}, {self.B})'
 
 
-class Point(Draw, geometry_object.Point):
+class Point_main(Draw, geometry_object.Point):
 
     def __init__(self, x, y, name=None):
         # self.color = random.choice([BLUE, RED, GREEN])
@@ -277,24 +277,26 @@ class Point(Draw, geometry_object.Point):
         geometry_object.Point.__init__(self, x, y)
         # self.r = random.choice([5,10, 15, 20])
         self.r = 5
-        self.name = name
+        self.name_point = name
+        # self.name = 'A'
 
     def draw(self, screen):
         try:
+            print(self.name_point)
             if self.move:
                 self.color = BLUE
             else:
                 self.color = GREEN
-            font = pygame.font.Font(None, 30)
-            text = font.render(
-                self.name, True, (0, 100, 0))
-            place = text.get_rect(
-                center=(self.x, self.y - 20))
-            screen.blit(text, place)
+            if self.name_point != None:
+                font = pygame.font.Font(None, 30)
+                text = font.render(
+                    self.name_point, True, (0, 100, 0))
+                place = text.get_rect(center=(self.x, self.y - 20))
+                screen.blit(text, place)
 
             pygame.draw.circle(screen, self.color, (self.x, self.y), self.r)
         except:
-            pass
+            return
 
     def removef(self):
         print(self.show)
@@ -304,6 +306,16 @@ class Point(Draw, geometry_object.Point):
 
     def __str__(self):
         return f'{self.x}, {self.y}'
+
+class Point(Point_main):
+
+    name_point = None
+
+    def __init__(self, x, y, name=None):
+        if name != None:
+            self.name_point = name
+        super().__init__(x, y, self.name_point)
+
 
 
 class Cross_Point(Draw, geometry_object.Point):

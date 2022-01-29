@@ -12,9 +12,9 @@ class All:
 
     def draw_setka(self):
         delta = 40
-        for i in range(25):
-            ind1 = self.add_point(-100, delta * i)
-            ind2 = self.add_point(-50, delta * i)
+        for i in range(100):
+            ind1 = self.add_point(-100, delta * i, name=False)
+            ind2 = self.add_point(-50, delta * i, name=False)
             self.point[ind1].save = False
             self.point[ind2].save = False
             line = Line(ind1, ind2)
@@ -23,8 +23,8 @@ class All:
             line.remove = False
             line.save = False
             self.all_sprites.append(line)
-            ind1 = self.add_point(delta * i, -100)
-            ind2 = self.add_point(delta * i, -50)
+            ind1 = self.add_point(delta * i, -100, name=False)
+            ind2 = self.add_point(delta * i, -50, name=False)
             self.point[ind1].save = False
             self.point[ind2].save = False
             line = Line(ind1, ind2)
@@ -40,7 +40,7 @@ class All:
     def __len__(self):
         return len(self.point)
 
-    def add_point(self, x, y):
+    def add_point(self, x, y, name=True):
         for i in range(self.__len__()):
             a = self.point[i]
             try:
@@ -49,7 +49,10 @@ class All:
                     return i
             except:
                 continue
-        self.point.append(Point(x, y, self.point_names.append()))
+        if name:
+            self.point.append(Point(x, y, self.point_names.append()))
+        else:
+            self.point.append(Point(x, y))
         return self.__len__() - 1
 
     def add_object(self, object):
@@ -128,13 +131,14 @@ class All:
                     return i
 
     def cross(self):
+        return 0
         for i in range(len(self.all_sprites)):
             for j in range(i + 1, len(self.all_sprites)):
                 a = self.all_sprites[i]
                 b = self.all_sprites[j]
                 points = a.cross(b)
-                for point in points:
-                    ind = self.add_point(point.x, point.y)
+                for pointi in points:
+                    ind = self.add_point(pointi.x, pointi.y)
                     self.point[ind].show = False
 
     def move(self, x, y):

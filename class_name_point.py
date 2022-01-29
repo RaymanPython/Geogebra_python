@@ -19,7 +19,7 @@ class Name_Point:
                 return self.s[self.k - 1]
             else:
                 self.k += 1
-                return self.s[self.k - 1] + str(self.names_dict[self.s[self.k - 1]] )
+                return self.s[self.k - 1] + ' ' + str(self.names_dict[self.s[self.k - 1]] )
         except:
             self.k += 1
             return self.s[self.k - 1]

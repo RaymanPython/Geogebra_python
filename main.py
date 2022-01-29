@@ -129,8 +129,14 @@ while running:
                 object_type = 'triangle'
             elif event.key == pygame.K_r:
                 object_type = 'remove'
-            elif event.key == pygame.K_a:
+            elif event.key == pygame.K_LEFT:
                 all.move(10, 0)
+            elif event.key == pygame.K_RIGHT:
+                all.move(-10, 0)
+            elif event.key == pygame.K_DOWN:
+                all.move(0, -10)
+            elif event.key == pygame.K_UP:
+                all.move(0, 10)
         elif event.type == pygame.MOUSEBUTTONDOWN and flag:
             if event.pos[0] <= wb or event.pos[1] <= 2 * hb:
                 pass
@@ -240,8 +246,6 @@ while running:
                             poisk_list = []
 
 
-
-
             elif object_type == 'poisk':
                 pos = event.pos
                 for i in range(len(all)):
@@ -317,6 +321,8 @@ while running:
             continue
         if i.show:
             i.draw(screen)
+        else:
+            pass
         # # # print(i)
     clock.tick(30)
 
